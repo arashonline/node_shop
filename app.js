@@ -16,12 +16,11 @@ const app = express();
 // req =>
 // res =>
 // next => allows the request to go to the next middleware
-app.use((req, res, next)=>{
-    console.log('in The middleware')
-    next();
+app.use('/add-product',(req, res, next)=>{
+    // use this one before because of the way middleware works
+    res.send(`<h1>The "add product" page</h1>`)
 });
-app.use((req, res, next)=>{
-    console.log('In The Second Middleware')
+app.use('/',(req, res, next)=>{
     // now that we don't have any more middleware then we can send a response
     // send allows us to send a response 
     // also we can attach a body
