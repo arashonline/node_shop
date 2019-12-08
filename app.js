@@ -11,7 +11,8 @@ const shopRoutes = require('./routes/shop');
 app.use(bodyParser.urlencoded({extended:false}))
 
 // admin routes is a middleware
-app.use(adminRoutes);
+// add a segment as filter for all routes
+app.use('/admin',adminRoutes);
 app.use(shopRoutes);
 
 // handling 404 
