@@ -9,6 +9,7 @@ const app = express();
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const rootDir = require('./util/path')
 
 app.use(bodyParser.urlencoded({extended:false}))
 
@@ -20,7 +21,7 @@ app.use(shopRoutes);
 // handling 404 
 app.use((req,res,next)=>{
     // chaining status to send
-    res.status(404).sendFile(path.join(__dirname,'views','404.html'))
+    res.status(404).sendFile(path.join(rootDir,'views','404.html'))
 })
 
 app.listen(port)
