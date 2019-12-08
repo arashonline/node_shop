@@ -12,6 +12,9 @@ const shopRoutes = require('./routes/shop');
 const rootDir = require('./util/path')
 
 app.use(bodyParser.urlencoded({extended:false}))
+// serve file statically 
+// grant read access to public folder
+app.use(express.static(path.join(rootDir,'public')))
 
 // admin routes is a middleware
 // add a segment as filter for all routes

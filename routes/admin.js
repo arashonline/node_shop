@@ -10,6 +10,7 @@ const router = express.Router();
 const rootDir = require('../util/path')
 
 
+
 // now we use the router to register things
 // /admin/add-product => GET
 router.get('/add-product',(req, res, next)=>{
