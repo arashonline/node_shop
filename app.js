@@ -1,5 +1,7 @@
 const port = 8020;
 
+const path = require('path');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 
@@ -18,7 +20,7 @@ app.use(shopRoutes);
 // handling 404 
 app.use((req,res,next)=>{
     // chaining status to send
-    res.status(404).send(`<h1>Page you'r looking not found</h1>`)
+    res.status(404).sendFile(path.join(__dirname,'views','404.html'))
 })
 
 app.listen(port)
