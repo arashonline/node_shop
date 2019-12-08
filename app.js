@@ -12,7 +12,7 @@ const app = express();
 // most simple way is to use a function 
 // req =>
 // res =>
-// next => allow request to go to next middleware
+// next => allows the request to go to the next middleware
 app.use((req, res, next)=>{
     console.log('in The middleware')
     next();
