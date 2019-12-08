@@ -1,4 +1,7 @@
-const http = require('http');
+const port = 8020;
+
+// const http = require('http');
+// we don't need http any more the express app.listen(port) does the necessary things for us
 
 // adding express framework to project
 
@@ -19,9 +22,17 @@ app.use((req, res, next)=>{
 });
 app.use((req, res, next)=>{
     console.log('In The Second Middleware')
+    // now that we don't have any more middleware then we can send a response
+    // send allows us to send a response 
+    // also we can attach a body
+    res.send(`<h1>Hello</h1>`)
 });
 
 // app is also a valid request handler so we can pass it to server
 
-const server = http.createServer(app);
-server.listen(8020);
+// const server = http.createServer(app);
+// server.listen(8020);
+
+// we can do app.listen(8020) which do both above commands for us
+
+app.listen(port)
