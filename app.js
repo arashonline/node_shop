@@ -17,7 +17,9 @@ app.use('/add-product',(req, res, next)=>{
     </form>`)
 });
 // you can omit next (or other argument) which you are not going to use
-app.use('/product',(req,res)=>{
+// using app.get to filter incoming gets
+// using app.post to filter incoming posts
+app.post('/product',(req,res)=>{
     console.log(req.body)
 
     // to redirect
