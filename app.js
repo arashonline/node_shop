@@ -14,6 +14,10 @@ app.use(bodyParser.urlencoded({extended:false}))
 app.use(adminRoutes);
 app.use(shopRoutes);
 
-
+// handling 404 
+app.use((req,res,next)=>{
+    // chaining status to send
+    res.status(404).send(`<h1>Page you'r looking not found</h1>`)
+})
 
 app.listen(port)
