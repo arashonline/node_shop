@@ -29,7 +29,8 @@ app.use(shopRoutes);
 // handling 404 
 app.use((req,res,next)=>{
     // chaining status to send
-    res.status(404).sendFile(path.join(rootDir,'views','404.html'))
+    // res.status(404).sendFile(path.join(rootDir,'views','404.html'))
+    res.render('404',{docTitle:"Page Not Found"})
 })
 
 app.listen(port)
