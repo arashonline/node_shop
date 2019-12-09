@@ -12,7 +12,7 @@ const rootDir = require('../util/path')
 const adminData = require('./admin');
 
 // now we use the router to register things
-router.get('/',(req, res, next)=>{
+router.get('/', (req, res, next) => {
     // console.log(adminData.products)
     // res.sendFile(path.join(rootDir,'views','shop.html'))
 
@@ -20,7 +20,13 @@ router.get('/',(req, res, next)=>{
 
     const products = adminData.products
 
-    res.render('shop', {prods:products, docTitle:"SHOP",path:'/'})
+    res.render('shop', { prods: products, 
+        pageTitle: "SHOP",
+     path: '/',
+      hasProducts: products.length > 0,
+       productCss: true,
+        activeShop: true
+     })
 });
 
 module.exports = router;

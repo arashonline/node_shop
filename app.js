@@ -4,11 +4,15 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const expressHbs = require('express-handlebars');
 
 const app = express();
 
+app.engine('hbs',expressHbs({layoutsDir:'views/layouts/',defaultLayout:'main-layout',extname:'hbs'}));
+
 // setting a global configuration value
-app.set('view engine', 'pug');
+// app.set('view engine', 'pug');
+app.set('view engine', 'hbs');
 // then we set views folder, the default one is MainFolder/views
 app.set('views','views');
 
@@ -30,7 +34,7 @@ app.use(shopRoutes);
 app.use((req,res,next)=>{
     // chaining status to send
     // res.status(404).sendFile(path.join(rootDir,'views','404.html'))
-    res.render('404',{docTitle:"Page Not Found"})
+    res.render('404',{pageTitle:"Page Not Found"})
 })
 
 app.listen(port)
