@@ -7,6 +7,11 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+// setting a global configuration value
+app.set('view engine', 'pug');
+// then we set views folder, the default one is MainFolder/views
+app.set('views','views');
+
 const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const rootDir = require('./util/path')
