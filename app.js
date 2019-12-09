@@ -4,15 +4,16 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const expressHbs = require('express-handlebars');
+// const expressHbs = require('express-handlebars');
 
 const app = express();
 
-app.engine('hbs',expressHbs({layoutsDir:'views/layouts/',defaultLayout:'main-layout',extname:'hbs'}));
+// app.engine('hbs',expressHbs({layoutsDir:'views/layouts/',defaultLayout:'main-layout',extname:'hbs'}));
 
 // setting a global configuration value
 // app.set('view engine', 'pug');
-app.set('view engine', 'hbs');
+// app.set('view engine', 'hbs');
+app.set('view engine', 'ejs');
 // then we set views folder, the default one is MainFolder/views
 app.set('views','views');
 
