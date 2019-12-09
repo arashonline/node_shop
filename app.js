@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-const adminRoutes = require('./routes/admin');
+const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const rootDir = require('./util/path')
 
@@ -18,7 +18,7 @@ app.use(express.static(path.join(rootDir,'public')))
 
 // admin routes is a middleware
 // add a segment as filter for all routes
-app.use('/admin',adminRoutes);
+app.use('/admin',adminData.routes);
 app.use(shopRoutes);
 
 // handling 404 

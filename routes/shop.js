@@ -9,10 +9,11 @@ const express = require('express');
 const router = express.Router();
 
 const rootDir = require('../util/path')
+const adminData = require('./admin');
 
 // now we use the router to register things
 router.get('/',(req, res, next)=>{
-    // __dirname global variable which holds the absolute path of current folder
+    console.log(adminData.products)
     res.sendFile(path.join(rootDir,'views','shop.html'))
 });
 
