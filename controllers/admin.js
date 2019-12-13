@@ -11,6 +11,17 @@ exports.getAddProduct = (req, res, next) => {
             activeAddProduct: true
         })
 }
+
+exports.getEditProduct = (req, res, next) => {
+    res.render('admin/edit-product',
+        {
+            pageTitle: "Edit Product",
+            path: '/admin/edit-product',
+            productCss: true,
+            formCss: true,
+            activeAddProduct: true
+        })
+}
 exports.postAddProduct = (req, res, next) => {
     const title = req.body.title;
     const imageUrl = req.body.imageUrl;
