@@ -51,3 +51,12 @@ exports.getCart = (req, res, next) => {
         })
 
 }
+
+exports.getCheckout = (req, res, next) => {
+    
+        res.render('shop/checkout', {
+            pageTitle: "Checkout page",
+            path: '/checkout',
+        })
+
+}

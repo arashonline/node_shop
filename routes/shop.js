@@ -15,5 +15,6 @@ const pageController = require('../controllers/page');
 router.get('/',pageController.home);
 router.get('/products',productsController.getProducts);
 router.get('/cart',productsController.getCart);
+router.get('/checkout',productsController.getCheckout);
 
 module.exports = router;
