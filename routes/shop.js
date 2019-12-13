@@ -9,8 +9,11 @@ const express = require('express');
 const router = express.Router();
 
 const productsController = require('../controllers/products');
+const pageController = require('../controllers/page');
 
 // now we use the router to register things
-router.get('/',productsController.getProducts);
+router.get('/',pageController.home);
+router.get('/products',productsController.getProducts);
+router.get('/cart',productsController.getCart);
 
 module.exports = router;
