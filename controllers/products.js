@@ -1,8 +1,6 @@
-// all logics related to products come to this file
 
-const products = [];
+const Product = require('../models/product');
 
-// we export any function we want
 exports.getAddProduct = (req, res, next)=>{
     res.render(
         'add-product',
@@ -14,14 +12,14 @@ exports.getAddProduct = (req, res, next)=>{
         activeAddProduct: true
         })
 }
-exports.postAddProduct = (req, res, next)=>{
-    console.log(req.body);
-    products.push({title: req.body.title})
-    
+exports.postAddProduct = (req, res, next)=>{    
+    const product = new Product(req.body.title);
+    product.save();
     res.redirect('/')
 }
 
 exports.getProducts =  (req, res, next) => {
+    const products = Product.fetchAll();
     res.render('shop', { prods: products, 
         pageTitle: "SHOP",
      path: '/',
