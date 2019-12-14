@@ -1,26 +1,24 @@
-// handles admin request
+const path = require('path');
 
 const express = require('express');
 
-
-// this router is like a mini express which we can export
-const router = express.Router();
-
-
 const adminController = require('../controllers/admin');
 
-// now we use the router to register things
+const router = express.Router();
+
 // /admin/add-product => GET
 router.get('/add-product', adminController.getAddProduct);
-router.get('/edit-product/:productId', adminController.getEditProduct);
-router.get('/products',adminController.getProductList);
+
+// /admin/products => GET
+router.get('/products', adminController.getProducts);
 
 // /admin/add-product => POST
-router.post('/add-product',adminController.postAddProduct)
-router.post('/update-product',adminController.postEditProduct)
-router.post('/delete-product',adminController.postDeleteProduct)
+router.post('/add-product', adminController.postAddProduct);
 
+router.get('/edit-product/:productId', adminController.getEditProduct);
 
+router.post('/edit-product', adminController.postEditProduct);
 
+router.post('/delete-product', adminController.postDeleteProduct);
 
 module.exports = router;
