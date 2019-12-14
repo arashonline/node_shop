@@ -18,6 +18,7 @@ router.get('/products',adminController.getProductList);
 // /admin/add-product => POST
 router.post('/add-product',adminController.postAddProduct)
 router.post('/update-product',adminController.postEditProduct)
+router.post('/delete-product',adminController.postDeleteProduct)
 
 
 
