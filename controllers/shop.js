@@ -16,15 +16,15 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  Product.findOne({
-    where: {id: prodId},
-  }).then( Product =>{
+  Product.findById(prodId)
+  .then( Product =>{
+    console.log(Product);
     if (!Product) {
       return res.redirect('/');
     }
     res.render('shop/product-detail', {
       product: Product,
-      pageTitle: Product.get('title'),
+      pageTitle: Product.title,
       path: '/products'
     });
   })

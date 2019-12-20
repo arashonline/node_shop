@@ -1,5 +1,6 @@
 const mongodb = require('mongodb')
 const MongoClient = mongodb.MongoClient;
+ObjectID = require('mongodb').ObjectID
 
 // to have one connection which is possible to connect from all over of our application 
 // we use _db 
@@ -27,7 +28,9 @@ const getDb = ()=>{
     throw 'No database found!';
 }
 
+
 // for connecting to the database
 exports.mongoConnect = mongoConnect;
 // for using the connection
 exports.getDb = getDb;
+exports.objectId = ObjectID;
