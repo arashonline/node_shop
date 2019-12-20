@@ -7,3 +7,5 @@ npm install --save sequelize
 #MongoDb
 add mongodb driver 
 npm install --save mongodb
+
+I hosted mongodb locally

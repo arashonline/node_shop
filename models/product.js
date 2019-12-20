@@ -11,7 +11,7 @@ class Product {
   save() {
     const db = getDb();
     // insertOne get an object to insert to db
-    db.collection('products').insertOne(this)
+    return db.collection('products').insertOne(this)
       .then(result =>{
         console.log(result);
       })
