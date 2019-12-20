@@ -75,8 +75,10 @@ sequelize
 
 })
 .then(user=>{
-    console.log(user);
-    app.listen(8020);
+    return user.createCart();
+})
+.then(cart =>{
+    app.listen(8020)
 })
 .catch(err=>{
     console.log(err);
