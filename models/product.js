@@ -2,60 +2,73 @@ const getDb = require('../util/database').getDb;
 const objectId = require('../util/database').objectId;
 
 class Product {
-  constructor(title, price, description, imageUrl) {
+  constructor(title, price, description, imageUrl, id) {
     this.title = title;
     this.price = price;
     this.description = description;
     this.imageUrl = imageUrl;
+    this._id = id;
   }
 
   save() {
     const db = getDb();
-    // insertOne get an object to insert to db
-    return db.collection('products').insertOne(this)
-      .then(result =>{
+    let dbOp;
+    if (this._id) {
+      // updating the product
+      dbOp = db.collection('products')
+      .updateOne({_id:new objectId(this._id)},{$set:this});
+    } else {
+      dbOp = db.collection('products').insertOne(this);
+    }
+    
+    return dbOp
+      .then(result => {
         console.log(result);
       })
       .catch(err => { console.log(err) })
+
   }
 
-  static fetchAll(){
+  
+  
+
+
+  static fetchAll() {
     const db = getDb();
     return db.collection('products')
-    .find()
-    .toArray()
-    .then(products =>{
-      console.log(products);
-      return products;
-    })
-    .catch(err => {console.log(err)});
+      .find()
+      .toArray()
+      .then(products => {
+        console.log(products);
+        return products;
+      })
+      .catch(err => { console.log(err) });
   }
 
-  static fetchOne(prodId){
+  static fetchOne(prodId) {
     const db = getDb();
     return db.collection('products')
-    .find({_id:  objectId(prodId)})
-    .toArray()
-    .then(products =>{
-      console.log(prodId);
-      console.log(products);
-      return products[0];
-      
-    }
-    ).catch(err=>{console.log(err)})
+      .find({ _id: objectId(prodId) })
+      .toArray()
+      .then(products => {
+        console.log(prodId);
+        console.log(products);
+        return products[0];
+
+      }
+      ).catch(err => { console.log(err) })
   }
 
-  static findById(prodId){
+  static findById(prodId) {
     const db = getDb();
     return db.collection('products')
-    .find({_id: objectId(prodId)})
-    .next()
-    .then(product =>{
-      console.log(product);
-      return product;
-      
-    }
-    ).catch(err=>{console.log(err)})
+      .find({ _id: objectId(prodId) })
+      .next()
+      .then(product => {
+        return product;
+
+      }
+      ).catch(err => { console.log(err) })
   }
 }
 
