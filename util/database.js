@@ -6,7 +6,7 @@ const MongoClient = mongodb.MongoClient;
 let _db;
 
 const mongoConnect = (callback)=>{
-    MongoClient.connect('mongodb://localhost:27017/nodeShop')
+    MongoClient.connect('mongodb://localhost:27017/nodeShop',{useUnifiedTopology: true})
     .then(client =>{
         console.log('Connected!');
         // nodeShop below overwrite the db_name we used above 
