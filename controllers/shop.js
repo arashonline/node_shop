@@ -90,34 +90,12 @@ exports.postCartDeleteProduct = (req, res, next) => {
 exports.postOrder = (req, res, next) => {
   let fetchedCart;
   req.user
-    .getCart()
-    .then(cart => {
-      fetchedCart = cart;
-      return cart.getProducts();
-    })
-    .then(products => {
-      return req.user.createOrder()
-        .then(order => {
-          // we don't pass it like below
-          // order.addProducts(products, {through:{quantity}})
-
-          // every product must have a special key
-          return order.addProduct(products.map(product => {
-            product.orderItem = { quantity: product.cartItem.quantity }
-            return product;
-          }))
-
-        })
-        .then(result => {
-          return fetchedCart.setProducts(null)
-        })
+    .addOrder()
         .then(cart => {
           res.redirect('/orders');
         })
         .catch(err => { console.log(err) });
-
-    })
-    .catch(err => { console.log(err) });
+    
 };
 
 exports.getOrders = (req, res, next) => {
