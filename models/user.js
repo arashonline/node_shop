@@ -73,20 +73,39 @@ class User {
       .collection('users')
       .updateOne(
         { _id: new objectId(this._id) },
-        { $set: { cart: {items: updatedCartItems} } });
+        { $set: { cart: { items: updatedCartItems } } });
   }
 
-  addOrder(){
+  addOrder() {
     const db = getDb();
-    return db.collection('orders').insertOne(this.cart)
-    .then(result =>{
-      this.cart = {items:[]}
-      return db
-      .collection('users')
-      .updateOne(
-        { _id: new objectId(this._id) },
-        { $set: { cart: {items: []} } });
-    })
+    return this.getCart()
+      .then(products => {
+        const order = {
+          items: products,
+          user: {
+            _id: new objectId(this._id),
+            name: this.name,
+            email: this.email
+          }
+        }
+        return db.collection('orders').insertOne(order)
+      })
+      .then(result => {
+        this.cart = { items: [] }
+        return db
+          .collection('users')
+          .updateOne(
+            { _id: new objectId(this._id) },
+            { $set: { cart: { items: [] } } });
+      })
+      .catch(err => { console.log(err) });
+  }
+
+  getOrders() {
+    const db = getDb();
+    return db.collection('orders').find({ 'user._id': new objectId(this._id) })
+    .toArray()
+    .then()
     .catch(err => { console.log(err) });
   }
 
