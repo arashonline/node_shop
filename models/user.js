@@ -41,6 +41,24 @@ class User {
     }})
   }
 
+  getCart(){
+    const db = getDb();
+    // storing only products id in an array of strings productIds
+    const productIds = this.cart.items.map(i=>{
+      return i.productId;
+    })
+    return db.collection('products').find({_id: {$in: productIds}})
+    .toArray()
+    .then( products =>{
+      return products.map( p => {
+        return {...p, quantity: this.cart.items.find(i => {
+          return i.productId.toString() === p._id.toString();
+        }).quantity
+      }
+      })
+    })
+  }
+
   static findById(userId){
     const db = getDb();
     // when using findOne there is no need to use next
