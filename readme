@@ -13,3 +13,6 @@ I hosted mongodb locally
 start using mongoose
 npm install --save mongoose
 I also truncated the db
+
+installing session package 
+npm install --save express-session
