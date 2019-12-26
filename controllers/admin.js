@@ -61,21 +61,27 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
 
-  const product = new Product(updatedTitle, updatedPrice, updatedDesc, updatedImageUrl, prodId);
-  console.log(product);
-  product.save()
-    .then(() => {
-      console.log('Updated Product!');
-      res.redirect('/admin/products');
-    })
-    .catch(err => { console.log(err); });
+  // instead of creating a product and then update an old one 
+  // we're fetch a product by id
+  Product.findById(prodId).then(product => {
+    product.title = updatedTitle;
+    product.price = updatedPrice;
+    product.description = updatedDesc;
+    product.imageUrl = updatedImageUrl;
+    // if we use save in a fetched record mongoose update it
+    return product.save();
 
+  }
+  ).then(() => {
+    console.log('Updated Product!');
+    res.redirect('/admin/products');
+  })
+    .catch(err => { console.log(err); });
 
 };
 
 exports.getProducts = (req, res, next) => {
-  // Product.findAll()
-  Product.fetchAll()
+  Product.find()
     .then(products => {
       res.render('admin/products', {
         prods: products,
