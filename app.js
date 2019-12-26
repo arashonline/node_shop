@@ -25,12 +25,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // adding a new middleware to always having access to user
 app.use((req, res, next) => {
-    User.findById("00d0fa000d0f0fa0df123120")
-    .then(user=>{
-        req.user = new User(user.name,user.email,user.cart,user._id);
-        next();
-    })
-    .catch(err=>{console.log(err)});
+    // User.findById("00d0fa000d0f0fa0df123120")
+    // .then(user=>{
+    //     req.user = new User(user.name,user.email,user.cart,user._id);
+    //     next();
+    // })
+    // .catch(err=>{console.log(err)});
+    next();
 })
 
 app.use('/admin', adminRoutes);
