@@ -29,20 +29,30 @@ const authRoutes = require('./routes/auth');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-    secret:'fklasdjflkasdhflaskdflkasdjflaskdjf',
-    resave:false,
-    saveUninitialized:false,
-    store: store 
+    secret: 'fklasdjflkasdhflaskdflkasdjflaskdjf',
+    resave: false,
+    saveUninitialized: false,
+    store: store
 }))
 
 // // adding a new middleware to always having access to user
 app.use((req, res, next) => {
-    User.findOne()
+    console.log(req.session)
+    if(!req.session.user){
+        return next();
+    }
+        User.findById(req.session.user._id)
         .then(user => {
             req.user = user;
             next();
         })
         .catch(err => { console.log(err) });
+})
+app.use((req, res, next) => {
+
+    req.isAuthenticated = req.session.isAuthenticated;
+    next();
+
 })
 
 app.use('/admin', adminRoutes);
