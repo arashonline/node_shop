@@ -16,3 +16,6 @@ I also truncated the db
 
 installing session package 
 npm install --save express-session
+
+adding a package to save session in mongodb
+npm install --save connect-mongodb-session

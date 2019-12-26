@@ -5,13 +5,18 @@ const bodyParser = require('body-parser');
 // we can simply add mongoose to our project
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const errorController = require('./controllers/error');
 
 const User = require('./models/user');
-
-
+const MONGODB_URI = 'mongodb://localhost:27017/nodeShop';
 const app = express();
+// we pass some options to the constructor 
+const store = new MongoDBStore({
+    uri: MONGODB_URI,
+    collection: 'sessions'
+})
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -27,6 +32,7 @@ app.use(session({
     secret:'fklasdjflkasdhflaskdflkasdjflaskdjf',
     resave:false,
     saveUninitialized:false,
+    store: store 
 }))
 
 // // adding a new middleware to always having access to user
@@ -46,8 +52,9 @@ app.use(authRoutes);
 
 app.use(errorController.get404);
 
+
 // we can connect using mongoose
-mongoose.connect('mongodb://localhost:27017/nodeShop')
+mongoose.connect(MONGODB_URI)
     .then(result => {
         User.findOne().then(user => {
             if (!user) {
