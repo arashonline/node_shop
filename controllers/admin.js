@@ -18,7 +18,10 @@ exports.postAddProduct = (req, res, next) => {
     title: title,
     price: price,
     description: description,
-    imageUrl: imageUrl
+    imageUrl: imageUrl,
+    // in mongoose instead of just saving user._id we could save user object an mongoose will retrieve the id form it
+    // userId: req.user._id,
+    userId: req.user,
   });
   // mongoose have a method name save()
   product.save()
