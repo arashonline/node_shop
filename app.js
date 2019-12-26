@@ -2,10 +2,12 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+// we can simply add mongoose to our project
+const mongoose = require('mongoose');
 
 const errorController = require('./controllers/error');
 
-const mongoConnect = require('./util/database').mongoConnect;
+// const mongoConnect = require('./util/database').mongoConnect;
 const User = require('./models/user');
 
 
@@ -37,7 +39,14 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 // mongodb 
 
-mongoConnect(() => {
+// mongoConnect(() => {
     
+//     app.listen(8021);
+// })
+
+// we can connect using mongoose
+mongoose.connect('mongodb://localhost:27017/nodeShop')
+.then(result =>{
     app.listen(8021);
 })
+.catch(err => {console.log});
