@@ -22,3 +22,6 @@ npm install --save connect-mongodb-session
 
 installing bcryptjs package to hash our passwords
 npm install --save bcryptjs
+
+protecting our site from csrf attacks
+npm install --save csurf

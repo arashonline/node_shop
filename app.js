@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
 
 const errorController = require('./controllers/error');
 
@@ -17,6 +18,8 @@ const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions'
 })
+// initialize a csrf protection
+const csrfProtection = csrf();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -34,6 +37,8 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }))
+app.use(csrfProtection);
+
 
 // // adding a new middleware to always having access to user
 app.use((req, res, next) => {
