@@ -66,19 +66,19 @@ app.use(errorController.get404);
 // we can connect using mongoose
 mongoose.connect(MONGODB_URI)
     .then(result => {
-        User.findOne().then(user => {
-            if (!user) {
-                // creating a user using mongoose
-                const user = new User({
-                    name: "Arash",
-                    email: "a@arash.co",
-                    cart: {
-                        items: []
-                    }
-                })
-                user.save();
-            }
-        })
+        // User.findOne().then(user => {
+        //     if (!user) {
+        //         // creating a user using mongoose
+        //         const user = new User({
+        //             name: "Arash",
+        //             email: "a@arash.co",
+        //             cart: {
+        //                 items: []
+        //             }
+        //         })
+        //         user.save();
+        //     }
+        // })
 
         app.listen(8021);
     })
