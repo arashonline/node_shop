@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const errorController = require('./controllers/error');
 
@@ -38,23 +39,38 @@ app.use(session({
     store: store
 }))
 app.use(csrfProtection);
+// flash should be initialized after session
+app.use(flash());
 
 
 // // adding a new middleware to always having access to user
 app.use((req, res, next) => {
-    if(!req.session.user){
+    if (!req.session.user) {
         return next();
     }
-        User.findById(req.session.user._id)
+    User.findById(req.session.user._id)
         .then(user => {
             req.user = user;
             next();
         })
         .catch(err => { console.log(err) });
 })
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
     res.locals.isAuthenticated = req.session.isLoggedIn;
     res.locals.csrfToken = req.csrfToken();
+
+    let errorMessage = req.flash('error');
+    let successMessage = req.flash('success');
+    if (errorMessage.length > 0) {
+        res.locals.errorMessage = errorMessage[0]
+    } else {
+        res.locals.errorMessage = null;
+    }
+    if (successMessage.length > 0) {
+        res.locals.successMessage = successMessage[0]
+    } else {
+        res.locals.successMessage = null;
+    }
     next();
 })
 
