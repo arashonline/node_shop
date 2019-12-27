@@ -42,7 +42,6 @@ app.use(csrfProtection);
 
 // // adding a new middleware to always having access to user
 app.use((req, res, next) => {
-    console.log(req.session)
     if(!req.session.user){
         return next();
     }
@@ -53,11 +52,10 @@ app.use((req, res, next) => {
         })
         .catch(err => { console.log(err) });
 })
-app.use((req, res, next) => {
-
-    req.isAuthenticated = req.session.isAuthenticated;
+app.use((req,res,next)=>{
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
     next();
-
 })
 
 app.use('/admin', adminRoutes);
