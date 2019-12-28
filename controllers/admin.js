@@ -66,25 +66,32 @@ exports.postEditProduct = (req, res, next) => {
 
   // instead of creating a product and then update an old one 
   // we're fetch a product by id
-  Product.findById(prodId).then(product => {
+  Product.findById(prodId)
+  .then(product => {
+    if(product.userId.toString() !== req.user._id.toString()){
+      return res.redirect('/')
+    }
     product.title = updatedTitle;
     product.price = updatedPrice;
     product.description = updatedDesc;
     product.imageUrl = updatedImageUrl;
     // if we use save in a fetched record mongoose update it
-    return product.save();
+    return product.save()
+    .then(() => {
+      console.log('Updated Product!');
+      res.redirect('/admin/products');
+    })
+    .catch(err => { console.log(err); });
+    
 
   }
-  ).then(() => {
-    console.log('Updated Product!');
-    res.redirect('/admin/products');
-  })
+  )
     .catch(err => { console.log(err); });
 
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find()
+  Product.find({userId: req.user._id})
   // _id will always fetched unless we explicitly exclude it
   // .select('title price -_id')
   // // populate allow us to get all the field of relation 
@@ -105,7 +112,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findByIdAndRemove(prodId)
+  Product.deleteOne({_id:prodId, userId:req.user._id})
     .then(result => {
       console.log("Product Deleted!");
       res.redirect('/admin/products');
