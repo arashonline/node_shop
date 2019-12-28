@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const sendGridTransport = require('nodemailer-sendgrid-transport');
@@ -113,3 +115,52 @@ exports.getReset = (req, res, next) => {
     pageTitle: 'Reset Password',
   });
 };
+
+exports.postReset = (req, res, next) => {
+  crypto.randomBytes(32, (err, buffer)=>{
+    if(err){
+      console.log(err)
+      return res.redirect('/reset')
+    }
+    const email = req.body.email;
+    const token = buffer.toString('hex');
+    User.findOne({email:email})
+    .then(user=>{
+      if(!user){
+        req.flash('error','An account with requested email does not exist!');
+        return res.redirect('/reset');
+      }
+      user.resetToken = token;
+      user.resetTokenExpiration = Date.now() + (3600*1000);
+      return user.save().then(result =>{
+        res.redirect('/')
+         transporter.sendMail({
+          to: email,
+          from: 'teat@arash.co',
+          subject: 'Password Reset',
+          html: `
+          <h1>Password Reset</h1>
+          <p>You requested a password reset.</p>
+          <p>Click <a href="http://localhost:8021/reset/${token}">This Link</a> to reset your password</p>
+          `,
+        })
+         .catch(err => console.log(err));;
+      });
+    })
+    .catch(err => console.log(err));
+  })
+};
+
+exports.getNewPassword = (req,res,next)=>{
+  const token = req.params.token;
+  User.findOne({resetToken:token, resetTokenExpiration:{$gt: Date.now()}})
+  .then(user=>{
+    res.render('auth/new-password', {
+      path: '/new-password',
+      pageTitle: 'Update Password',
+      userId: user._id.toString()
+    });
+  })
+  .catch(err => console.log(err));
+  
+}
