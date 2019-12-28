@@ -28,3 +28,6 @@ npm install --save csurf
 
 adding a package to handel messages to users
 npm install --save connect-flash
+
+adding package to send email
+npm install --save nodemailer nodemailer-sendgrid-transport
