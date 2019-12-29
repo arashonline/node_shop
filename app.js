@@ -29,6 +29,8 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
+const { validationResult } = require('express-validator/check')
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -58,6 +60,8 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
     res.locals.isAuthenticated = req.session.isLoggedIn;
     res.locals.csrfToken = req.csrfToken();
+    
+    
 
     let errorMessage = req.flash('error');
     let successMessage = req.flash('success');
@@ -71,6 +75,9 @@ app.use((req, res, next) => {
     } else {
         res.locals.successMessage = null;
     }
+
+        res.locals.errorMessageValidator = '';
+    
     
     next()
 })

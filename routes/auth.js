@@ -2,7 +2,7 @@ const express = require('express');
 
 const authController = require('../controllers/auth');
 // const expValidator = require('express-validator/check');
-const { check } = require('express-validator/check');
+const { check, body } = require('express-validator/check');
 
 const router = express.Router();
 
@@ -13,7 +13,8 @@ router.get('/signup', authController.getSignup);
 
 router.post('/login', authController.postLogin);
 
-router.post('/signup', check('email')
+router.post('/signup', 
+[check('email')
 .isEmail()
 .withMessage('Please enter a valid Email!')
 .custom((value, {req})=>{
@@ -21,7 +22,16 @@ router.post('/signup', check('email')
         throw new Error('This is not a valid email')
     }
     return true;
+}),
+body('password','Please enter a valid (6-15) Password')
+.isLength({min:5 , max: 15}),
+body('confirmPassword').custom((value,{req})=>{
+    if(value !== req.body.password){
+        throw new Error('Passwords should match');
+    }
+    return true;
 })
+]
 ,authController.postSignup);
 
 router.post('/logout', authController.postLogout);
