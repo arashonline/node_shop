@@ -1,6 +1,18 @@
 <% if(errorMessage){ %> 
-    <div class="user-message user-message--error"><%= errorMessage %></div>
+<% errorMessage.forEach(eMsg=>{ %> 
+    <div class="user-message user-message--error"><%= eMsg %></div>
+    <% }) %> 
+   
+<% } %> 
+<% if(errorMessageValidator){ %> 
+<% errorMessageValidator.forEach(eMsg=>{ %> 
+    <div class="user-message user-message--error"><%= eMsg.msg %></div>
+    <% }) %> 
+   
 <% } %> 
 <% if(successMessage){ %> 
-    <div class="user-message user-message--success"><%= successMessage %></div>
+    <% successMessage.forEach(sMsg=>{ %> 
+        <div class="user-message user-message--success"><%= sMsg %></div>
+        <% }) %> 
+       
 <% } %> 

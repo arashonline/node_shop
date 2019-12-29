@@ -62,22 +62,24 @@ app.use((req, res, next) => {
     let errorMessage = req.flash('error');
     let successMessage = req.flash('success');
     if (errorMessage.length > 0) {
-        res.locals.errorMessage = errorMessage[0]
+        res.locals.errorMessage = errorMessage
     } else {
         res.locals.errorMessage = null;
     }
     if (successMessage.length > 0) {
-        res.locals.successMessage = successMessage[0]
+        res.locals.successMessage = successMessage
     } else {
         res.locals.successMessage = null;
     }
-    next();
+    
+    next()
 })
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 app.use(authRoutes);
+
 
 app.use(errorController.get404);
 
