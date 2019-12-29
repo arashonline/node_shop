@@ -78,6 +78,8 @@ exports.postSignup = (req, res, next) => {
       errorMessageValidator: errors.array()
     });
   }
+
+  
   User.findOne({ email: email })
     .then(userDoc => {
       if (userDoc) {

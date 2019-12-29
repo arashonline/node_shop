@@ -6,7 +6,7 @@
 <% } %> 
 <% if(errorMessageValidator){ %> 
 <% errorMessageValidator.forEach(eMsg=>{ %> 
-    <div class="user-message user-message--error"><strong><%= eMsg.param %>: </strong><%= eMsg.msg %></div>
+    <div class="user-message user-message--error"><strong><%= eMsg.param %>: </strong><%=  eMsg.msg %></div>
     <% }) %> 
    
 <% } %> 
