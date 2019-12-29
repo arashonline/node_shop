@@ -31,3 +31,6 @@ npm install --save connect-flash
 
 adding package to send email
 npm install --save nodemailer nodemailer-sendgrid-transport
+
+adding validation package to project
+npm install --save express validator
