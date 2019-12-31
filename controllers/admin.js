@@ -99,7 +99,11 @@ exports.getEditProduct = (req, res, next) => {
         hasError:false
       });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error)
+    });
 
 };
 
@@ -151,8 +155,11 @@ exports.postEditProduct = (req, res, next) => {
     
   }
   )
-    .catch(err => { console.log(err); });
-
+  .catch(err => {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error)
+  });
 };
 
 exports.getProducts = (req, res, next) => {
@@ -168,20 +175,24 @@ exports.getProducts = (req, res, next) => {
         pageTitle: 'Admin Products',
         path: '/admin/products'
       });
-    })
+    })    
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error)
     });
-
 };
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   Product.deleteOne({_id:prodId, userId:req.user._id})
-    .then(result => {
+    .then(result => {  
       console.log("Product Deleted!");
       res.redirect('/admin/products');
     })
-    .catch(err => { console.log(err); });
-
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error)
+    });
 };
