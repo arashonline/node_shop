@@ -70,6 +70,7 @@ app.use((req, res, next) => {
 
     let errorMessage = req.flash('error');
     let successMessage = req.flash('success');
+    
     if (errorMessage.length > 0) {
         res.locals.errorMessage = errorMessage
     } else {
@@ -80,6 +81,9 @@ app.use((req, res, next) => {
     } else {
         res.locals.successMessage = null;
     }
+    
+        res.locals.errorMessageSystem = [];
+    
 
         res.locals.errorMessageValidator = [];
     
@@ -92,6 +96,7 @@ app.use(shopRoutes);
 
 app.use(authRoutes);
 
+app.get('/500', errorController.get500)
 
 app.use(errorController.get404);
 

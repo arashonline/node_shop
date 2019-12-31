@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const mongoose = require('mongoose');
 const { validationResult } = require('express-validator/check')
 
 exports.getAddProduct = (req, res, next) => {
@@ -28,7 +29,7 @@ exports.postAddProduct = (req, res, next) => {
     console.log(errors.array())
     return res.status(422).render('admin/edit-product', {
       pageTitle: 'Add Product',
-      path: '/admin/edit-product',
+      path: '/admin/add-product',
       editing: false,
       hasError: true,
       product: {
@@ -37,11 +38,12 @@ exports.postAddProduct = (req, res, next) => {
         price: price,
         description: description
       },
-      errorMessageValidator: errors.array(),
+      errorMessageValidator: errors.array()
     });
   }
   // for mongoose we only send back a js object which map the variables
   const product = new Product({
+    _id: new mongoose.Schema.Types.ObjectId('0'),
     title: title,
     price: price,
     description: description,
@@ -58,7 +60,21 @@ exports.postAddProduct = (req, res, next) => {
 
     })
     .catch(err => {
-      console.log(err);
+      // return res.status(500).render('admin/edit-product', {
+      //   pageTitle: 'Add Product',
+      //   path: '/admin/add-product',
+      //   editing: false,
+      //   hasError: true,
+      //   product: {
+      //     title: title,
+      //     imageUrl: imageUrl,
+      //     price: price,
+      //     description: description
+      //   },
+      //   errorMessageSystem: [{"msg":"Database failed","param":"DATABASE","value": '',"location": 'body'}],
+      //   errorMessageValidator: [],
+      // });
+      res.redirect('/500');
     });
 };
 

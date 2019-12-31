@@ -1,3 +1,4 @@
+<% console.log(errorMessage) %> 
 <% if(errorMessage){ %> 
 <% errorMessage.forEach(eMsg=>{ %> 
     <div class="user-message user-message--error"><%= eMsg %></div>
@@ -13,6 +14,12 @@
 <% if(successMessage){ %> 
     <% successMessage.forEach(sMsg=>{ %> 
         <div class="user-message user-message--success"><%= sMsg %></div>
+        <% }) %> 
+       
+<% } %> 
+<% if(errorMessageSystem){ %> 
+    <% errorMessageSystem.forEach(eMsg=>{ %> 
+        <div class="user-message user-message--error"><strong><%= eMsg.param %>: </strong><%=  eMsg.msg %></div>
         <% }) %> 
        
 <% } %> 
