@@ -19,8 +19,11 @@ exports.getLogin = (req, res, next) => {
   
   res.render('auth/login', {
     path: '/login',
-    pageTitle: 'Login'
-
+    pageTitle: 'Login',
+    oldInput:{
+      email:'',
+      password:'',
+    }
   });
 };
 
@@ -33,12 +36,27 @@ exports.getSignup = (req, res, next) => {
       password:'',
       confirmPassword:'',
     }
+   
   });
 };
 
 exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+  const errors= validationResult(req);
+  console.log(errors);
+  if(!errors.isEmpty()){
+    console.log(errors.array())
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'Login',
+      errorMessageValidator: errors.array(),
+      oldInput: {
+         email:email,
+         password:password
+      }
+    });
+  }
   User.findOne({ email: email })
     .then(user => {
       if (!user) {
@@ -72,7 +90,6 @@ exports.postLogin = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const confirmPassword = req.body.confirmPassword;
   const errors= validationResult(req);
   if(!errors.isEmpty()){
     console.log(errors.array())
