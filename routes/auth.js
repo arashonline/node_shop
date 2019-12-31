@@ -1,5 +1,4 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
 
 const authController = require('../controllers/auth');
 // const expValidator = require('express-validator/check');
@@ -20,7 +19,6 @@ router.post('/login',[
     .normalizeEmail(),
   body('password', 'Password has to be valid.')
     .isLength({ min: 5 })
-    .isAlphanumeric()
     .trim()
 ], authController.postLogin);
 
