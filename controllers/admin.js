@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const mongoose = require('mongoose');
 const { validationResult } = require('express-validator/check')
 
 exports.getAddProduct = (req, res, next) => {
@@ -43,7 +42,6 @@ exports.postAddProduct = (req, res, next) => {
   }
   // for mongoose we only send back a js object which map the variables
   const product = new Product({
-    _id: new mongoose.Schema.Types.ObjectId('0'),
     title: title,
     price: price,
     description: description,
@@ -74,7 +72,11 @@ exports.postAddProduct = (req, res, next) => {
       //   errorMessageSystem: [{"msg":"Database failed","param":"DATABASE","value": '',"location": 'body'}],
       //   errorMessageValidator: [],
       // });
-      res.redirect('/500');
+      // res.redirect('/500');
+
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error)
     });
 };
 
