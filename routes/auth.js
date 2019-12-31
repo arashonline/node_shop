@@ -16,10 +16,12 @@ router.get('/signup', authController.getSignup);
 router.post('/login',[
   body('email')
     .isEmail()
-    .withMessage('Please enter a valid email address.'),
+    .withMessage('Please enter a valid email address.')
+    .normalizeEmail(),
   body('password', 'Password has to be valid.')
     .isLength({ min: 5 })
     .isAlphanumeric()
+    .trim()
 ], authController.postLogin);
 
 router.post('/signup', 
@@ -38,15 +40,18 @@ router.post('/signup',
         return Promise.reject('An account with requested email already exist!');
       }
     })
-}),
+})
+.normalizeEmail(),
 body('password','Please enter a valid (6-15) Password')
-.isLength({min:5 , max: 15}),
+.isLength({min:5 , max: 15})
+.trim(),
 body('confirmPassword').custom((value,{req})=>{
     if(value !== req.body.password){
         throw new Error('Passwords should match');
     }
     return true;
 })
+.trim()
 ]
 ,authController.postSignup);
 
