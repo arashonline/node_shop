@@ -44,30 +44,10 @@ app.use(csrfProtection);
 // flash should be initialized after session
 app.use(flash());
 
-
-// // adding a new middleware to always having access to user
-app.use((req, res, next) => {
-    if (!req.session.user) {
-        return next();
-    }
-    User.findById(req.session.user._id)
-        .then(user => {
-            if(!user){
-                return next()
-            }
-            req.user = user;
-            next();
-        })
-        .catch(err => { 
-            throw new Error(err)
-         });
-})
 app.use((req, res, next) => {
     res.locals.isAuthenticated = req.session.isLoggedIn;
     res.locals.csrfToken = req.csrfToken();
     
-    
-
     let errorMessage = req.flash('error');
     let successMessage = req.flash('success');
     
@@ -84,12 +64,30 @@ app.use((req, res, next) => {
     
         res.locals.errorMessageSystem = [];
     
-
         res.locals.errorMessageValidator = [];
-    
     
     next()
 })
+
+// // adding a new middleware to always having access to user
+app.use((req, res, next) => {
+    if (!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
+        .then(user => {
+            if(!user){
+                return next()
+            }
+            req.user = user;
+            next();
+        })
+        .catch(err => { 
+            // throw new Error(err)
+            next(new Error(err));
+         });
+})
+
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -101,7 +99,12 @@ app.get('/500', errorController.get500)
 app.use(errorController.get404);
 
 app.use((error,req, res, next)=>{
-    res.redirect('/500')
+    // res.redirect('/500')
+    res.status(500).render(
+        '500', {
+        pageTitle: 'Error!',
+        path: '/500'
+      });
 })
 
 
