@@ -34,3 +34,6 @@ npm install --save nodemailer nodemailer-sendgrid-transport
 
 adding validation package to project
 npm install --save express validator
+
+adding ability to add file to form
+npm install --save multer
