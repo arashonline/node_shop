@@ -170,8 +170,9 @@ exports.getInvoice = (req, res, next) => {
   Order.findById(orderId)
     .then(order => {
       if (!order) {
+        console.log('here')
         req.flash('error', 'No order found!');
-        return res.redirect('/orders')
+        return res.redirect('/orders');
       } else if (order.user.userId.toString() === req.user._id.toString()) {
         const invoiceName = 'invoice-' + orderId + '.pdf';
         const invoicePath = path.join('data', 'invoices', invoiceName)

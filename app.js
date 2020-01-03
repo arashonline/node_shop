@@ -1,7 +1,5 @@
 const path = require('path');
 
-
-
 const express = require('express');
 const bodyParser = require('body-parser');
 // we can simply add mongoose to our project
@@ -31,8 +29,8 @@ const fileStorage = multer.diskStorage({
       cb(null, ImageFolder);
     },
     filename: (req, file, cb) => {
-        console.log(new Date())
-        console.log(new Date().toTimeString())
+        // console.log(new Date())
+        // console.log(new Date().toTimeString())
         const prefix = Math.random();
     //   cb(null, new Date().toISOString()+ '-' + file.originalname);
       cb(null, prefix + '-' + file.originalname);
@@ -83,7 +81,7 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
-    console.log(path.join(__dirname, ImageFolder));
+    // console.log(path.join(__dirname, ImageFolder));
     res.locals.isAuthenticated = req.session.isLoggedIn;
     res.locals.csrfToken = req.csrfToken();
     
@@ -107,8 +105,6 @@ app.use((req, res, next) => {
     
     next()
 })
-
-
 
 // // adding a new middleware to always having access to user
 app.use((req, res, next) => {
@@ -140,7 +136,7 @@ app.get('/500', errorController.get500)
 app.use(errorController.get404);
 
 app.use((error,req, res, next)=>{
-    // res.redirect('/500')
+   console.log(error);
     res.status(500).render(
         '500', {
         pageTitle: 'Error!',
@@ -149,7 +145,6 @@ app.use((error,req, res, next)=>{
         csrfToken:req.csrfToken()
       });
 })
-
 
 // we can connect using mongoose
 mongoose.connect(MONGODB_URI,{ useNewUrlParser: true,useUnifiedTopology: true })
