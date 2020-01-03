@@ -4,6 +4,8 @@ const path = require('path');
 const Product = require('../models/product');
 const Order = require('../models/order');
 
+const PDFDocument = require('pdfkit');
+
 exports.getProducts = (req, res, next) => {
   // find method in mongoose give us all records (in this case all products)
   // we can use cursor() and find()
@@ -174,6 +176,7 @@ exports.getInvoice =  (req, res, next) => {
       const invoiceName = 'invoice-'+orderId+'.pdf';
       const invoicePath = path.join('data','invoices',invoiceName)
     
+      // loading file in ram - bad practice
       // fs.readFile(invoicePath, (err, data)=>{
       //   if(err){
       //     req.flash('error','No order file found!');
@@ -184,11 +187,26 @@ exports.getInvoice =  (req, res, next) => {
       //   res.send(data)
       // })
 
-      // streaming file
-      const file = fs.createReadStream(invoicePath);
+      
+      // streaming file - good practice
+      // const file = fs.createReadStream(invoicePath);
+      // res.setHeader('content-type', 'application/pdf');
+      // res.setHeader('content-disposition', 'attachment; filename="'+invoiceName+'"');
+      // file.pipe(res)
+
+      const pdfDoc = new PDFDocument;
       res.setHeader('content-type', 'application/pdf');
-      res.setHeader('content-disposition', 'attachment; filename="'+invoiceName+'"');
-      file.pipe(res)
+      res.setHeader('content-disposition', 'inline; filename="'+invoiceName+'"');
+      // creating and storing pdf
+      pdfDoc.pipe(fs.createWriteStream(invoicePath));
+      // res is a writable read stream
+      pdfDoc.pipe(res);
+
+      // now every thing we add to pdfDoc will save in the invoicePath and also stream to the response
+
+      pdfDoc.text('Hellow');
+
+      pdfDoc.end()
 
     }else{
       req.flash('error','You are not allowed to do this action');
