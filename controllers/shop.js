@@ -123,7 +123,7 @@ exports.postOrder = (req, res, next) => {
         return {
           quantity: item.quantity,
           // to save full product object using as follow 
-          product: {...item.productId._doc},
+          product: { ...item.productId._doc },
         }
       });
       const order = new Order({
@@ -136,9 +136,9 @@ exports.postOrder = (req, res, next) => {
       return order.save();
     }).then(result => {
       return req.user.clearCart();
-     
+
     })
-    .then(()=>{
+    .then(() => {
       res.redirect('/orders');
     })
     .catch(err => {
@@ -149,9 +149,9 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  Order.find({"user.userId":req.user._id})
-  .then(orders => {
-    
+  Order.find({ "user.userId": req.user._id })
+    .then(orders => {
+
       res.render('shop/orders', {
         path: '/orders',
         pageTitle: 'Your Orders',
@@ -165,57 +165,73 @@ exports.getOrders = (req, res, next) => {
     });
 };
 
-exports.getInvoice =  (req, res, next) => {
+exports.getInvoice = (req, res, next) => {
   const orderId = req.params.orderId;
   Order.findById(orderId)
-  .then(order=>{
-    if(!order){
-      req.flash('error','No order found!');
+    .then(order => {
+      if (!order) {
+        req.flash('error', 'No order found!');
         return res.redirect('/orders')
-    }else if(order.user.userId.toString() === req.user._id.toString()){
-      const invoiceName = 'invoice-'+orderId+'.pdf';
-      const invoicePath = path.join('data','invoices',invoiceName)
-    
-      // loading file in ram - bad practice
-      // fs.readFile(invoicePath, (err, data)=>{
-      //   if(err){
-      //     req.flash('error','No order file found!');
-      //   return res.redirect('/orders')
-      //   }
-      //   res.setHeader('content-type', 'application/pdf');
-      //   res.setHeader('content-disposition', 'attachment; filename="'+invoiceName+'"');
-      //   res.send(data)
-      // })
+      } else if (order.user.userId.toString() === req.user._id.toString()) {
+        const invoiceName = 'invoice-' + orderId + '.pdf';
+        const invoicePath = path.join('data', 'invoices', invoiceName)
 
-      
-      // streaming file - good practice
-      // const file = fs.createReadStream(invoicePath);
-      // res.setHeader('content-type', 'application/pdf');
-      // res.setHeader('content-disposition', 'attachment; filename="'+invoiceName+'"');
-      // file.pipe(res)
+        // loading file in ram - bad practice
+        // fs.readFile(invoicePath, (err, data)=>{
+        //   if(err){
+        //     req.flash('error','No order file found!');
+        //   return res.redirect('/orders')
+        //   }
+        //   res.setHeader('content-type', 'application/pdf');
+        //   res.setHeader('content-disposition', 'attachment; filename="'+invoiceName+'"');
+        //   res.send(data)
+        // })
 
-      const pdfDoc = new PDFDocument;
-      res.setHeader('content-type', 'application/pdf');
-      res.setHeader('content-disposition', 'inline; filename="'+invoiceName+'"');
-      // creating and storing pdf
-      pdfDoc.pipe(fs.createWriteStream(invoicePath));
-      // res is a writable read stream
-      pdfDoc.pipe(res);
 
-      // now every thing we add to pdfDoc will save in the invoicePath and also stream to the response
+        // streaming file - good practice
+        // const file = fs.createReadStream(invoicePath);
+        // res.setHeader('content-type', 'application/pdf');
+        // res.setHeader('content-disposition', 'attachment; filename="'+invoiceName+'"');
+        // file.pipe(res)
 
-      pdfDoc.text('Hellow');
+        const pdfDoc = new PDFDocument;
+        res.setHeader('content-type', 'application/pdf');
+        res.setHeader('content-disposition', 'inline; filename="' + invoiceName + '"');
+        // creating and storing pdf
+        pdfDoc.pipe(fs.createWriteStream(invoicePath));
+        // res is a writable read stream
+        pdfDoc.pipe(res);
 
-      pdfDoc.end()
+        // now every thing we add to pdfDoc will save in the invoicePath and also stream to the response
 
-    }else{
-      req.flash('error','You are not allowed to do this action');
+        pdfDoc.fontSize(26).text('Invoice', {
+          underline: true,
+
+        })
+        pdfDoc.text('--------------------------');
+
+        let totalPrice = 0;
+
+        order.products.forEach(prod => {
+          totalPrice +=  ( prod.product.price * prod.quantity);
+          pdfDoc
+          .fontSize(14).text(prod.product.title + ' - ' + prod.quantity + ' x ' + '$' + prod.product.price)
+        })
+
+        pdfDoc.text('--------------------------');
+
+        pdfDoc.fontSize(18).text('Total Price: $'+ totalPrice);
+
+        pdfDoc.end()
+
+      } else {
+        req.flash('error', 'You are not allowed to do this action');
         return res.redirect('/orders')
-    }
-  }).catch(err => {
-    return next(err)
-  })
-  
+      }
+    }).catch(err => {
+      return next(err)
+    })
+
 };
 
 
