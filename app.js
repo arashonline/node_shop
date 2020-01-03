@@ -1,5 +1,7 @@
 const path = require('path');
 
+
+
 const express = require('express');
 const bodyParser = require('body-parser');
 // we can simply add mongoose to our project
@@ -8,11 +10,13 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const errorController = require('./controllers/error');
 
 const User = require('./models/user');
 const MONGODB_URI = 'mongodb://localhost:27017/nodeShop';
+const ImageFolder = 'public/images';
 const app = express();
 // we pass some options to the constructor 
 const store = new MongoDBStore({
@@ -21,6 +25,31 @@ const store = new MongoDBStore({
 })
 // initialize a csrf protection
 const csrfProtection = csrf();
+
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, ImageFolder);
+    },
+    filename: (req, file, cb) => {
+        console.log(new Date())
+        console.log(new Date().toTimeString())
+        const prefix = Math.random();
+    //   cb(null, new Date().toISOString()+ '-' + file.originalname);
+      cb(null, prefix + '-' + file.originalname);
+    }
+  });
+  
+  const fileFilter = (req, file, cb) => {
+    if (
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpg' ||
+      file.mimetype === 'image/jpeg'
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+    }
+  };
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -33,7 +62,16 @@ const { validationResult } = require('express-validator/check')
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer(
+    {
+    // dest:'public/images' // to set destination of file
+    storage: fileStorage,
+    fileFilter: fileFilter
+}
+).single('image'));
+
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(session({
     secret: 'fklasdjflkasdhflaskdflkasdjflaskdjf',
     resave: false,
@@ -45,6 +83,7 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
+    console.log(path.join(__dirname, ImageFolder));
     res.locals.isAuthenticated = req.session.isLoggedIn;
     res.locals.csrfToken = req.csrfToken();
     
@@ -68,6 +107,8 @@ app.use((req, res, next) => {
     
     next()
 })
+
+
 
 // // adding a new middleware to always having access to user
 app.use((req, res, next) => {
@@ -103,7 +144,9 @@ app.use((error,req, res, next)=>{
     res.status(500).render(
         '500', {
         pageTitle: 'Error!',
-        path: '/500'
+        path: '/500',
+        isAuthenticated: req.session.isLoggedIn,
+        csrfToken:req.csrfToken()
       });
 })
 
@@ -111,20 +154,6 @@ app.use((error,req, res, next)=>{
 // we can connect using mongoose
 mongoose.connect(MONGODB_URI,{ useNewUrlParser: true,useUnifiedTopology: true })
     .then(result => {
-        // User.findOne().then(user => {
-        //     if (!user) {
-        //         // creating a user using mongoose
-        //         const user = new User({
-        //             name: "Arash",
-        //             email: "a@arash.co",
-        //             cart: {
-        //                 items: []
-        //             }
-        //         })
-        //         user.save();
-        //     }
-        // })
-
         app.listen(8021);
     })
-    .catch(err => { console.log });
+    .catch(err => { console.log(err) });
