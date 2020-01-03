@@ -165,18 +165,39 @@ exports.getOrders = (req, res, next) => {
 
 exports.getInvoice =  (req, res, next) => {
   const orderId = req.params.orderId;
-  const invoiceName = 'invoice-'+orderId+'.pdf';
-  const invoicePath = path.join('data','invoices',invoiceName)
+  Order.findById(orderId)
+  .then(order=>{
+    if(!order){
+      req.flash('error','No order found!');
+        return res.redirect('/orders')
+    }else if(order.user.userId.toString() === req.user._id.toString()){
+      const invoiceName = 'invoice-'+orderId+'.pdf';
+      const invoicePath = path.join('data','invoices',invoiceName)
+    
+      // fs.readFile(invoicePath, (err, data)=>{
+      //   if(err){
+      //     req.flash('error','No order file found!');
+      //   return res.redirect('/orders')
+      //   }
+      //   res.setHeader('content-type', 'application/pdf');
+      //   res.setHeader('content-disposition', 'attachment; filename="'+invoiceName+'"');
+      //   res.send(data)
+      // })
 
-  fs.readFile(invoicePath, (err, data)=>{
-    if(err){
-      return next(err);
+      // streaming file
+      const file = fs.createReadStream(invoicePath);
+      res.setHeader('content-type', 'application/pdf');
+      res.setHeader('content-disposition', 'attachment; filename="'+invoiceName+'"');
+      file.pipe(res)
+
+    }else{
+      req.flash('error','You are not allowed to do this action');
+        return res.redirect('/orders')
     }
-    res.setHeader('content-type', 'application/pdf');
-    res.setHeader('content-disposition', 'attachment; filename="'+invoiceName+'"');
-    res.send(data)
-
+  }).catch(err => {
+    return next(err)
   })
+  
 };
 
 
