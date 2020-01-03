@@ -40,3 +40,6 @@ npm install --save multer
 
 using pdfkit
 npm install --save pdfkit
+
+using stipe payment 
+npm install --save stripe
