@@ -5,6 +5,8 @@ const fileHelper = require('../util/file');
 
 const imgaePrefixUrl = 'images\\';
 
+const ITEM_PER_PAGE = 1;
+
 exports.getAddProduct = (req, res, next) => {
   
   res.render('admin/edit-product', {
@@ -187,24 +189,54 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
+
+  const page = +req.query.page || 1;
+  let totalItems;
+
   Product.find({userId: req.user._id})
-  // _id will always fetched unless we explicitly exclude it
-  // .select('title price -_id')
-  // // populate allow us to get all the field of relation 
-  // .populate('userId','-name')
+    .countDocuments()
+    .then(numProducts => {
+      totalItems = numProducts;
+      return Product.find()
+        .skip((page - 1) * ITEM_PER_PAGE)
+        .limit(ITEM_PER_PAGE);
+    })
     .then(products => {
-      // console.log(products)
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
-        path: '/admin/products'
+        path: '/admin/products',
+        currentPage: page,
+        hasNextPage: ITEM_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEM_PER_PAGE)
       });
-    })    
-    .catch(err => {
+    })
+        .catch(err => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error)
     });
+  // Product.find({userId: req.user._id})
+  // // _id will always fetched unless we explicitly exclude it
+  // // .select('title price -_id')
+  // // // populate allow us to get all the field of relation 
+  // // .populate('userId','-name')
+  //   .then(products => {
+  //     // console.log(products)
+  //     res.render('admin/products', {
+  //       prods: products,
+  //       pageTitle: 'Admin Products',
+  //       path: '/admin/products'
+  //     });
+  //   })    
+  //   .catch(err => {
+  //     const error = new Error(err);
+  //     error.httpStatusCode = 500;
+  //     return next(error)
+  //   });
 };
 
 exports.postDeleteProduct = (req, res, next) => {

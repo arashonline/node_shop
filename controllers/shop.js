@@ -6,15 +6,31 @@ const Order = require('../models/order');
 
 const PDFDocument = require('pdfkit');
 
+const ITEM_PER_PAGE = 2;
+
 exports.getProducts = (req, res, next) => {
-  // find method in mongoose give us all records (in this case all products)
-  // we can use cursor() and find()
+  const page = +req.query.page || 1;
+  let totalItems;
+
   Product.find()
+    .countDocuments()
+    .then(numProducts => {
+      totalItems = numProducts;
+      return Product.find()
+        .skip((page - 1) * ITEM_PER_PAGE)
+        .limit(ITEM_PER_PAGE);
+    })
     .then(products => {
       res.render('shop/product-list', {
         prods: products,
-        pageTitle: 'All Products',
-        path: '/products'
+        pageTitle: 'Products',
+        path: '/products',
+        currentPage: page,
+        hasNextPage: ITEM_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEM_PER_PAGE)
       });
     })
     .catch(err => {
@@ -26,34 +42,42 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  // mongoose has a findById method
   Product.findById(prodId)
-    .then(Product => {
-      console.log(Product);
-      if (!Product) {
-        return res.redirect('/');
-      }
+    .then(product => {
       res.render('shop/product-detail', {
-        product: Product,
-        pageTitle: Product.title,
+        product: product,
+        pageTitle: product.title,
         path: '/products'
       });
     })
     .catch(err => {
       const error = new Error(err);
       error.httpStatusCode = 500;
-      return next(error)
+      return next(error);
     });
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.find()
+  const page = +req.query.page || 1;
+  let totalItems;
+  Product.countDocuments().count().then(numOfProduct => {
+    totalItems = numOfProduct;
+    return Product.find()
+      .skip((page - 1) * ITEM_PER_PAGE)
+      .limit(ITEM_PER_PAGE)
+  })
     .then(products => {
       console.log(products);
       res.render('shop/index', {
         prods: products,
         pageTitle: 'Shop',
-        path: '/'
+        path: '/',
+        currentPage: page,
+        hasNextPage: ITEM_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEM_PER_PAGE)
       });
     })
     .catch(err => {
@@ -214,14 +238,14 @@ exports.getInvoice = (req, res, next) => {
         let totalPrice = 0;
 
         order.products.forEach(prod => {
-          totalPrice +=  ( prod.product.price * prod.quantity);
+          totalPrice += (prod.product.price * prod.quantity);
           pdfDoc
-          .fontSize(14).text(prod.product.title + ' - ' + prod.quantity + ' x ' + '$' + prod.product.price)
+            .fontSize(14).text(prod.product.title + ' - ' + prod.quantity + ' x ' + '$' + prod.product.price)
         })
 
         pdfDoc.text('--------------------------');
 
-        pdfDoc.fontSize(18).text('Total Price: $'+ totalPrice);
+        pdfDoc.fontSize(18).text('Total Price: $' + totalPrice);
 
         pdfDoc.end()
 
