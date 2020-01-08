@@ -9,13 +9,18 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
+const helmet = require('helmet');
 
 const errorController = require('./controllers/error');
 
 const User = require('./models/user');
-const MONGODB_URI = 'mongodb://localhost:27017/nodeShop';
+
+const MONGODB_URI = `mongodb://${process.env.MONGODB_URI}/${process.env.DATABASE}`;
 const ImageFolder = 'public/images';
 const app = express();
+
+
+
 // we pass some options to the constructor 
 const store = new MongoDBStore({
     uri: MONGODB_URI,
@@ -55,6 +60,8 @@ app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
+
+app.use(helmet());
 
 const { validationResult } = require('express-validator/check')
 
@@ -149,6 +156,6 @@ app.use((error,req, res, next)=>{
 // we can connect using mongoose
 mongoose.connect(MONGODB_URI,{ useNewUrlParser: true,useUnifiedTopology: true })
     .then(result => {
-        app.listen(8021);
+        app.listen(process.env.PORT || 8021);
     })
     .catch(err => { console.log(err) });
