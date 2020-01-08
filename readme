@@ -43,3 +43,9 @@ npm install --save pdfkit
 
 using stipe payment 
 npm install --save stripe
+
+using helmet to protect headers
+npm install --save helmet
+
+using compression
+npm install --save compression

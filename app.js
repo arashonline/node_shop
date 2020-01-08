@@ -10,6 +10,7 @@ const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
 const helmet = require('helmet');
+const compression = require('compression');
 
 const errorController = require('./controllers/error');
 
@@ -62,6 +63,7 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
 app.use(helmet());
+app.use(compression());
 
 const { validationResult } = require('express-validator/check')
 
